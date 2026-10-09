@@ -1,72 +1,86 @@
-# Folio — free Markdown reading pages
+# Folio 2 — Markdown, beautifully presented
 
-A tiny Markdown editor and reader that runs entirely in the browser, hosted free on GitHub Pages. No Node.js, build step, database, or domain required.
+A tiny Markdown publishing studio hosted free on GitHub Pages. No Node.js, build step, server, database, or paid domain required.
 
-## Features
+## What's new in version 2
 
-- Upload or drag in a `.md` or `.markdown` file (local, private to your browser)
-- Edit Markdown and preview changes live
-- Switch between Literary and Editorial themes
-- Download one standalone HTML file (all design CSS is embedded)
-- Share published documents at `?doc=docs/YOUR-FILE.md`
-- Mobile-friendly reading layout, headings, quotes, lists, tables and print styles
+Your **live preview and downloaded HTML files** now have an interactive reading toolbar:
 
-## Publish it with GitHub Pages
+- **A− / A+** buttons to make reading text smaller or larger (80%–160%); click the percentage to reset to 100%.
+- **Section chooser** that shows your current heading while you scroll. Pick a different heading to jump there.
+- **Table of contents** in a sticky sidebar on wider screens. It highlights the current heading; click one to navigate.
+- **Reading-progress bar** at the top of the page, plus estimated reading time.
+- **Dark mode** button (the crescent / sun icon). Your text-size and dark-mode preferences are remembered when the browser permits local storage.
+- **Back to the beginning** button at the end of each document.
+- **Reading mode** in the editor to hide the Markdown source and read the formatted article at full width.
 
-1. Create a **public** GitHub repository named `markdown-reader` (or another name).
-2. Copy all files and the `docs/` folder from this starter project into the **root** of that repository. Do not upload only the ZIP file: extract it first.
-   - In GitHub: click **Add file → Upload files**, then drag the extracted contents into the upload area and **Commit changes**.
-   - Alternatively: clone the repository, copy these files into it, and `git add . && git commit -m "Add Markdown reader" && git push`.
-3. Go to **Settings → Pages** in your GitHub repository.
-4. Under **Build and deployment**, set **Source** to **Deploy from a branch**.
-5. Choose **main**, **/(root)**, and click **Save**.
-6. Your site will appear at `https://YOUR-USERNAME.github.io/markdown-reader/`. First deployment may take several minutes.
+Downloaded `.html` files contain their own CSS and JavaScript: the reader controls also work **offline**, without the Markdown libraries or a network connection.
 
-If you choose a different repository name, replace `markdown-reader` in the URLs above with your name.
+## Other features
 
-## Share a published Markdown file
+- Upload or drag in a `.md` / `.markdown` file; files remain local in the browser.
+- Edit Markdown and see a live preview.
+- Switch between **Literary** and **Editorial** design themes.
+- Download a single standalone HTML file.
+- Publish Markdown files from your repo using `?doc=docs/FILE.md` links.
+- Jump directly to a heading in a published document with a `#heading-id` fragment.
+- Responsive reading layout and print-friendly formatting.
 
-1. Add `docs/my-story.md` to the repository and commit it (through GitHub's web interface or `git push`).
-2. Open this URL, replacing the username and repo name:
+## Deploy to GitHub Pages (first time)
 
-   `https://YOUR-USERNAME.github.io/markdown-reader/?doc=docs/my-story.md`
+1. Create a **public** GitHub repository, for example `markdown-reader`.
+2. Extract this ZIP and put the included **files and `docs/` folder at the repository root**. Do not upload only the ZIP.
+3. In the repository, select **Settings → Pages → Build and deployment**.
+4. Set **Source: Deploy from a branch**, **Branch: main**, and **Folder: /(root)**; save.
+5. In a few minutes, the app should be online at `https://YOUR-USERNAME.github.io/markdown-reader/`.
 
-3. Send that URL to anyone. They can read it without a GitHub account. Add `&theme=editorial` to open it in the Editorial style; otherwise it defaults to Literary.
+### Already have Folio v1 deployed?
 
-Example URLs after publishing:
+Upload and commit the replacements for `index.html`, `app.js`, `style.css`, and `README.md` from this ZIP, leaving your existing `docs/` files in place. The `.nojekyll` file still belongs at the root. If you have customized any of those files, merge your changes instead of overwriting them.
 
-- `?doc=docs/sample-report.md&theme=editorial`
-- `?doc=docs/sample-novella.md&theme=literary`
+## Share reports and novellas
 
-**Important:** Uploading a Markdown file into the browser *does not* publish it to GitHub. It stays local until you upload/commit it to the public repository. Do not commit private reports or manuscripts that you do not want publicly readable.
+1. Add a Markdown file to `docs/`, e.g., `docs/my-novella.md`, and commit the change.
+2. Share `https://YOUR-USERNAME.github.io/markdown-reader/?doc=docs/my-novella.md&theme=literary`.
+3. The reader automatically generates a section list from Markdown headings. Pick a heading using the selector at the top (or the sidebar on a wide standalone HTML page).
+4. For specific chapters, append `#chapter-one` (for example: `?doc=docs/my-novella.md&theme=literary#chapter-one`).
 
-## Run locally
+### Publish a clean, standalone HTML page instead
 
-You can try opening `index.html` in a browser. The editor should work when you are online (the Markdown parsing libraries are loaded from jsDelivr), but the `?doc=` feature uses `fetch` and should be tested through a local web server:
+Use **Download HTML** in the Folio editor, add the resulting `my-novella.html` to your repository's `pages/` folder, and commit it. Then share:
+
+`https://YOUR-USERNAME.github.io/markdown-reader/pages/my-novella.html`
+
+That link opens **only the finished reader**: no Markdown editor and no CDN dependencies. The zoom, section navigation, progress, and dark mode all work in the downloaded file.
+
+**Note:** Dragging a `.md` file into the editor does **not** publish it. To share a permanent URL, add it to your public repository first. Do not commit private manuscripts or sensitive reports.
+
+## Run and customize locally
+
+Opening `index.html` directly is often enough for the editor when online, because the Markdown parser libraries load from a CDN. To test the `?doc=` feature locally, run a simple static server in this directory:
 
 ```sh
 python3 -m http.server 8000
 ```
 
-Then visit `http://localhost:8000/`.
+Then open `http://localhost:8000/`.
 
-## Customize it
+- `app.js` — Markdown parsing, sanitization, upload, themes, shareable document URLs, standalone HTML export.
+- `index.html` — editor layout, reader toolbar, **`reading-styles`** CSS, and the **`reader-runtime`** JavaScript that gets embedded into exported HTML.
+- `style.css` — editor shell and split-screen layout (not needed by exported pages).
+- `docs/` — Markdown files that GitHub Pages makes shareable.
+- `.nojekyll` — keeps GitHub Pages from running Jekyll over the site.
 
-- `app.js` — Markdown parsing, sanitization, upload, themes, shareable URLs, HTML download.
-- `index.html` — app layout and the `<style id="reading-styles">` block, which is also included in exported HTML.
-- `style.css` — appearance of the editor and toolbar (not included in exported HTML).
-- `docs/` — publicly shareable Markdown documents.
-- `.nojekyll` — keeps GitHub Pages from running Jekyll on the files.
-
-The editor uses [Marked](https://marked.js.org/) for Markdown and [DOMPurify](https://github.com/cure53/DOMPurify) to sanitize generated HTML. Both dependencies are pinned to versions in `index.html` and loaded from jsDelivr. Exported HTML does not need JavaScript or the parsing libraries to render.
+The editor uses [Marked](https://marked.js.org/) and [DOMPurify](https://github.com/cure53/DOMPurify), pinned to versions in `index.html` and loaded from jsDelivr. Only the editor requires those dependencies; exported reading pages do not.
 
 ## Limitations
 
-- No authentication or one-click publishing. Files are published by committing them to your repo.
-- Images referenced with relative Markdown paths may not work in a downloaded HTML file; use absolute URLs, or embed the images later.
-- It is a simple renderer, not a CMS. Advanced Markdown plugins are not included.
-- JavaScript and network access to the parser CDN are required to use the editor, but exported HTML can be opened offline (excluding any remote images or links).
+- No accounts or one-click publishing. GitHub publishing happens when you commit files to your repo.
+- Standalone HTML embeds CSS and navigation JavaScript, **not remote images**; links or images from relative Markdown paths may require absolute URLs.
+- A published `?doc=` link opens the editor-and-reader page. Commit an exported `.html` file under `pages/` for the cleaner reader-only experience.
+- Reading preferences use browser storage where available; some file viewers restrict storage, but controls still work for that session.
+- The parser supports standard Markdown well; complex custom extensions (such as academic footnotes) may require plugins.
 
 ## License
 
-This starter code is provided for you to modify and use. Marked and DOMPurify remain under their own licenses, linked above.
+This starter code is yours to customize and use. Marked and DOMPurify keep their own licenses.
