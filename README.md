@@ -2,7 +2,7 @@
 
 A tiny Markdown publishing studio hosted free on GitHub Pages.
 
-The app should be online at `https://ashwin2rai.github.io/markdown-reader/`
+The app should be online here: [Visit Folio](https://ashwin2rai.github.io/markdown-reader/) 
 
 ## What's new in version 2
 
