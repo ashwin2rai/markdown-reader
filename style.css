@@ -81,3 +81,29 @@ button:focus-visible, a:focus-visible, textarea:focus-visible, input:focus-visib
   .panel-heading { padding: 0 13px; }
   #markdown-input { padding: 22px 17px; }
 }
+
+/* A scrollable preview lets the reader's navigation bar stay visible. */
+.split-view { height: 760px; min-height: 0; }
+.source-panel, .preview-panel { min-height: 0; }
+#markdown-input { min-height: 0; resize: none; }
+.preview-scroll { overflow-y: auto; scroll-behavior: smooth; overscroll-behavior: contain; }
+.preview-scroll > .reading-page { min-height: 100%; }
+.focus-button { border-color: #e8e6e0; white-space: nowrap; }
+.focus-button[aria-pressed="true"] { background: #eaf0e9; color: #355a42; border-color: #cddfce; }
+.workspace.is-focus-mode .split-view { grid-template-columns: minmax(0, 1fr); }
+.workspace.is-focus-mode .source-panel { display: none; }
+.workspace.is-focus-mode .preview-panel { min-width: 0; }
+@media (max-width: 950px) {
+  .split-view { height: auto; min-height: 0; }
+  .source-panel { height: 360px; }
+  #markdown-input { min-height: 0; max-height: none; }
+  .preview-panel { height: 710px; }
+  .preview-scroll > .reading-page { min-height: 100%; }
+  .workspace.is-focus-mode .preview-panel { height: 78vh; min-height: 610px; }
+}
+@media (max-width: 560px) {
+  .source-panel { height: 330px; }
+  .preview-panel { height: 660px; }
+  .action-group-right { gap: 8px; }
+  .focus-button { flex: 0 1 auto; }
+}
