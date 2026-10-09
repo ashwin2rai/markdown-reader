@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ef">
+  <meta name="description" content="A tiny, free Markdown publishing studio. Preview, style and export beautiful reading pages.">
+  <title>Folio — Markdown, beautifully presented</title>
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- This CSS is shared by the on-screen preview and every exported HTML file. -->
+  <style id="reading-styles">
+    *, *::before, *::after { box-sizing: border-box; }
+    .reading-page {
+      --paper: #fffcf5;
+      --ink: #282820;
+      --muted: #746e63;
+      --rule: #e5ddd0;
+      --accent: #a16b39;
+      --soft: #f4ebdb;
+      --prose-font: "Iowan Old Style", "Baskerville", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+      --heading-font: "Iowan Old Style", "Baskerville", "Palatino Linotype", Georgia, serif;
+      background: var(--paper);
+      color: var(--ink);
+      min-height: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
+    .reading-page[data-theme="editorial"] {
+      --paper: #fff;
+      --ink: #142236;
+      --muted: #627085;
+      --rule: #d9e1e9;
+      --accent: #245e95;
+      --soft: #f0f5fa;
+      --prose-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --heading-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    .reading-page .article-content {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: clamp(38px, 7vw, 92px) clamp(24px, 6vw, 70px) 110px;
+      font-family: var(--prose-font);
+      font-size: 18px;
+      line-height: 1.84;
+      overflow-wrap: anywhere;
+    }
+    .reading-page .article-content > :first-child { margin-top: 0; }
+    .reading-page .article-content h1,
+    .reading-page .article-content h2,
+    .reading-page .article-content h3,
+    .reading-page .article-content h4,
+    .reading-page .article-content h5,
+    .reading-page .article-content h6 {
+      color: var(--ink);
+      font-family: var(--heading-font);
+      line-height: 1.22;
+      font-weight: 700;
+      letter-spacing: -.035em;
+      scroll-margin-top: 24px;
+    }
+    .reading-page .article-content h1 { font-size: clamp(2.6rem, 5vw, 4.1rem); margin: 0 0 .45em; letter-spacing: -.052em; }
+    .reading-page .article-content h2 { font-size: clamp(1.65rem, 3vw, 2.2rem); margin: 2.3em 0 .67em; }
+    .reading-page .article-content h3 { font-size: 1.35rem; margin: 1.8em 0 .55em; }
+    .reading-page .article-content h4 { font-size: 1.1rem; margin: 1.5em 0 .5em; }
+    .reading-page .article-content p { margin: 0 0 1.3em; }
+    .reading-page .article-content h1 + p { font-size: 1.13em; color: var(--muted); margin-bottom: 2.4em; }
+    .reading-page .article-content strong { font-weight: 700; }
+    .reading-page .article-content a { color: var(--accent); text-underline-offset: .15em; }
+    .reading-page .article-content a:hover { text-decoration-thickness: 2px; }
+    .reading-page .article-content ul,
+    .reading-page .article-content ol { padding-left: 1.45em; margin: .4em 0 1.5em; }
+    .reading-page .article-content li { padding-left: .2em; margin: .42em 0; }
+    .reading-page .article-content li::marker { color: var(--accent); }
+    .reading-page .article-content li > p { margin: .3em 0; }
+    .reading-page .article-content blockquote {
+      margin: 2.2em 0;
+      padding: .25em 0 .25em 1.35em;
+      border-left: 3px solid var(--accent);
+      color: var(--muted);
+      font-size: 1.17em;
+      font-style: italic;
+      line-height: 1.65;
+    }
+    .reading-page .article-content blockquote p:last-child { margin-bottom: 0; }
+    .reading-page .article-content hr { border: 0; border-top: 1px solid var(--rule); margin: 3.6em auto; width: 38%; }
+    .reading-page .article-content code {
+      font: .84em/1.6 ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      padding: .15em .32em;
+      background: var(--soft);
+      border-radius: 4px;
+    }
+    .reading-page .article-content pre {
+      overflow-x: auto;
+      background: var(--soft);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 1.1em 1.2em;
+      margin: 1.6em 0;
+    }
+    .reading-page .article-content pre code { padding: 0; background: transparent; }
+    .reading-page .article-content img { max-width: 100%; height: auto; border-radius: 6px; }
+    .reading-page .article-content table { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; margin: 1.8em 0; font-size: .9em; }
+    .reading-page .article-content th,
+    .reading-page .article-content td { text-align: left; border-bottom: 1px solid var(--rule); padding: .7em .8em; }
+    .reading-page .article-content th { color: var(--ink); background: var(--soft); }
+    .reading-page .article-content input[type="checkbox"] { accent-color: var(--accent); }
+    .reading-page[data-theme="editorial"] .article-content { font-size: 16.5px; line-height: 1.83; }
+    .reading-page[data-theme="editorial"] .article-content h1 { font-weight: 800; letter-spacing: -.065em; }
+    .reading-page[data-theme="editorial"] .article-content h2 { padding-top: .65em; border-top: 1px solid var(--rule); font-weight: 750; }
+    .reading-page[data-theme="editorial"] .article-content h3 { font-weight: 750; }
+    .reading-page[data-theme="editorial"] .article-content blockquote { font-size: 1.06em; font-style: normal; background: var(--soft); padding: 1em 1.3em; border-radius: 0 8px 8px 0; }
+    @media (max-width: 620px) {
+      .reading-page .article-content { padding: 35px 23px 70px; font-size: 17px; }
+      .reading-page[data-theme="editorial"] .article-content { font-size: 16px; }
+    }
+    @media print {
+      .reading-page { background: white; }
+      .reading-page .article-content { width: 100%; padding: 0; }
+      .reading-page .article-content h1,
+      .reading-page .article-content h2,
+      .reading-page .article-content h3 { break-after: avoid; }
+      .reading-page .article-content blockquote,
+      .reading-page .article-content pre { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Folio home"><span class="brand-icon" aria-hidden="true">F</span> folio<span class="brand-dot">.</span></a>
+      <nav class="top-nav" aria-label="Sample documents">
+        <a href="?doc=docs/sample-report.md&amp;theme=editorial">Sample report <span aria-hidden="true">↗</span></a>
+        <a href="?doc=docs/sample-novella.md&amp;theme=literary">Sample story <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="eyebrow"><span class="eyebrow-dot"></span> A SMALL PUBLISHING STUDIO</div>
+        <h1>Words deserve<br><em>a beautiful page.</em></h1>
+        <p>Turn Markdown into a refined reading experience. No account, no server, no fuss. Just your writing, beautifully presented.</p>
+      </section>
+
+      <section class="workspace" aria-label="Markdown editor and preview">
+        <div class="workspace-toolbar">
+          <div class="action-group">
+            <label class="primary-button" for="file-input"><span class="button-icon" aria-hidden="true">↑</span> Upload .md</label>
+            <input class="visually-hidden" type="file" id="file-input" accept=".md,.markdown,text/markdown,text/plain">
+            <button type="button" id="sample-button" class="subtle-button">Reset to example</button>
+          </div>
+          <div class="action-group action-group-right">
+            <fieldset class="theme-toggle" aria-label="Reading theme">
+              <legend class="visually-hidden">Reading theme</legend>
+              <button type="button" class="theme-choice is-active" data-theme="literary" aria-pressed="true">Literary</button>
+              <button type="button" class="theme-choice" data-theme="editorial" aria-pressed="false">Editorial</button>
+            </fieldset>
+            <button type="button" id="download-button" class="dark-button"><span aria-hidden="true">↓</span> Download HTML</button>
+          </div>
+        </div>
+
+        <div class="split-view" id="drop-zone">
+          <section class="source-panel" aria-labelledby="source-heading">
+            <div class="panel-heading">
+              <span id="source-heading"><span class="panel-index">01</span> MARKDOWN SOURCE</span>
+              <span class="source-name" id="source-name">example.md</span>
+            </div>
+            <label class="visually-hidden" for="markdown-input">Markdown source editor</label>
+            <textarea id="markdown-input" spellcheck="false" aria-label="Markdown source editor"></textarea>
+            <div class="panel-footer"><span class="small-dot"></span> Editable · Auto-preview <span class="footer-right" id="character-count">0 characters</span></div>
+          </section>
+
+          <section class="preview-panel" aria-labelledby="preview-heading">
+            <div class="panel-heading">
+              <span id="preview-heading"><span class="panel-index">02</span> LIVE PREVIEW</span>
+              <span class="preview-live"><span class="small-dot"></span> LIVE</span>
+            </div>
+            <div class="preview-scroll">
+              <div class="reading-page" id="reading-page" data-theme="literary">
+                <article id="rendered-article" class="article-content" aria-label="Rendered Markdown document"></article>
+              </div>
+            </div>
+            <div class="panel-footer" id="status-message" role="status" aria-live="polite">Ready to write.</div>
+          </section>
+        </div>
+      </section>
+      <footer class="app-footer"><span>Built for stories, reports, and everything in between.</span><span>Files you upload stay in this browser unless you publish them to your repository.</span></footer>
+    </main>
+  </div>
+
+  <!-- Pinned dependencies. Both run entirely in the browser. -->
+  <script defer src="https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/dompurify@3.4.16/dist/purify.min.js"></script>
+  <script defer src="./app.js"></script>
+</body>
+</html>
