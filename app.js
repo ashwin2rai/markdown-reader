@@ -61,6 +61,7 @@ function renderMarkdown() {
   });
   article.innerHTML = safeHtml;
   addHeadingIds(article);
+  readingPage.folioReader?.refresh();
 }
 
 function addHeadingIds(root) {
@@ -105,6 +106,7 @@ function setTheme(theme) {
 function removePublishedDocFromUrl() {
   const url = new URL(window.location.href);
   url.searchParams.delete("doc");
+  url.hash = "";
   history.replaceState(null, "", url.href);
 }
 
@@ -149,6 +151,7 @@ async function openPublishedDocument(path) {
     const markdown = await response.text();
     const name = decodeURIComponent(requested.pathname.split("/").pop());
     setDocument(markdown, name);
+    readingPage.folioReader?.refresh({ jumpToHash: true });
     setStatus(`Loaded published document: ${name}`);
   } catch (error) {
     setStatus(`Unable to open the shared document. ${error.message}`);
@@ -167,14 +170,21 @@ function exportStandaloneHtml() {
   }
 
   const title = article.querySelector("h1")?.textContent?.trim() || documentName;
-  const theme = readingPage.dataset.theme;
   const readingStyles = document.getElementById("reading-styles").textContent;
+  // Export the complete interactive reader, not just the article body.
+  // Styling and reader behavior are bundled so the HTML works offline.
+  const exportedReader = readingPage.cloneNode(true);
+  exportedReader.dataset.mode = "standalone";
+  exportedReader.removeAttribute("id");
+  const runtime = document.getElementById("reader-runtime").textContent
+    .replace(/<\/script/gi, "<\\/script");
   const exportHtml = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
+  <meta name="description" content="A beautifully formatted reading page.">
   <title>${escapeHtml(title)}</title>
   <style>
     html, body { margin: 0; padding: 0; }
@@ -182,11 +192,8 @@ function exportStandaloneHtml() {
   </style>
 </head>
 <body>
-  <main class="reading-page" data-theme="${theme}">
-    <article class="article-content">
-${article.innerHTML}
-    </article>
-  </main>
+${exportedReader.outerHTML}
+<script>${runtime}</script>
 </body>
 </html>`;
 
@@ -225,6 +232,14 @@ document.getElementById("sample-button").addEventListener("click", () => {
 });
 
 document.getElementById("download-button").addEventListener("click", exportStandaloneHtml);
+
+const focusButton = document.getElementById("focus-button");
+focusButton.addEventListener("click", () => {
+  const focused = document.querySelector(".workspace").classList.toggle("is-focus-mode");
+  readingPage.dataset.mode = focused ? "standalone" : "preview";
+  focusButton.setAttribute("aria-pressed", String(focused));
+  focusButton.textContent = focused ? "◫ Show editor" : "◫ Reading mode";
+});
 
 // Drag and drop a Markdown file over either panel.
 dropZone.addEventListener("dragover", (event) => {
