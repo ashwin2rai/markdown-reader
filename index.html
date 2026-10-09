@@ -12,35 +12,108 @@
   <style id="reading-styles">
     *, *::before, *::after { box-sizing: border-box; }
     .reading-page {
-      --paper: #fffcf5;
-      --ink: #282820;
-      --muted: #746e63;
-      --rule: #e5ddd0;
-      --accent: #a16b39;
-      --soft: #f4ebdb;
+      --paper: #fffcf6;
+      --ink: #292a26;
+      --muted: #787468;
+      --rule: #e6dfd3;
+      --accent: #a17145;
+      --soft: #f5efe5;
+      --glass: #fffcf6;
       --prose-font: "Iowan Old Style", "Baskerville", "Palatino Linotype", "Book Antiqua", Georgia, serif;
       --heading-font: "Iowan Old Style", "Baskerville", "Palatino Linotype", Georgia, serif;
+      --reader-base-size: 18px;
+      --reader-scale: 1;
       background: var(--paper);
       color: var(--ink);
       min-height: 100%;
       -webkit-font-smoothing: antialiased;
+      transition: background-color .2s, color .2s;
     }
     .reading-page[data-theme="editorial"] {
       --paper: #fff;
-      --ink: #142236;
-      --muted: #627085;
-      --rule: #d9e1e9;
-      --accent: #245e95;
-      --soft: #f0f5fa;
+      --ink: #17263a;
+      --muted: #687589;
+      --rule: #dfe5eb;
+      --accent: #2a649b;
+      --soft: #f0f5f9;
+      --glass: #fff;
+      --reader-base-size: 17px;
       --prose-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --heading-font: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
+    .reading-page[data-appearance="dark"] {
+      --paper: #1c1f1f;
+      --ink: #eeece4;
+      --muted: #aeaca5;
+      --rule: #3a3d3d;
+      --accent: #d5ab7d;
+      --soft: #292c2c;
+      --glass: #1c1f1f;
+    }
+    .reading-page[data-appearance="dark"][data-theme="editorial"] {
+      --paper: #151d27;
+      --ink: #e8eef6;
+      --muted: #a5b4c6;
+      --rule: #344151;
+      --accent: #89bceb;
+      --soft: #202b39;
+      --glass: #151d27;
+    }
+    .reading-page button, .reading-page select { font: inherit; }
+    .reading-page button { cursor: pointer; }
+    .reading-page button:focus-visible, .reading-page a:focus-visible, .reading-page select:focus-visible {
+      outline: 2px solid var(--accent); outline-offset: 3px;
+    }
+    .reading-page .reader-chrome {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid var(--rule);
+      background: var(--glass);
+      background: color-mix(in srgb, var(--glass) 94%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+    .reading-page .reader-progress-track { height: 3px; background: var(--soft); overflow: hidden; }
+    .reading-page .reader-progress-fill { display: block; width: 0%; height: 100%; background: var(--accent); transition: width .12s linear; }
+    .reading-page .reader-chrome-inner {
+      display: flex; justify-content: space-between; align-items: center; gap: 16px;
+      max-width: 1300px; min-height: 67px; padding: 11px clamp(16px, 3vw, 42px); margin: 0 auto;
+    }
+    .reading-page .reader-document-heading { display: flex; gap: 10px; align-items: center; min-width: 0; }
+    .reading-page .reader-symbol {
+      flex: none; display: grid; place-items: center; width: 30px; height: 30px;
+      border: 1px solid var(--rule); border-radius: 7px; color: var(--accent);
+      font-family: Georgia, serif; font-style: italic; font-size: 23px; line-height: 1;
+    }
+    .reading-page .reader-document-info { display: flex; flex-direction: column; min-width: 0; gap: 2px; }
+    .reading-page .reader-document-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 255px; font-family: var(--heading-font); font-size: 13px; font-weight: 700; }
+    .reading-page .reader-reading-time { color: var(--muted); font: 10px/1.5 ui-sans-serif, system-ui, sans-serif; letter-spacing: .025em; }
+    .reading-page .reader-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; min-width: 0; }
+    .reading-page .reader-section-wrapper { display: flex; align-items: center; gap: 8px; min-width: 0; }
+    .reading-page .reader-section-label { font: 700 9px/1.2 ui-sans-serif,system-ui,sans-serif; letter-spacing: .13em; color: var(--muted); white-space: nowrap; }
+    .reading-page .reader-section-select {
+      appearance: none; -webkit-appearance: none; width: clamp(120px, 17vw, 205px); min-width: 0;
+      padding: 9px 28px 9px 11px; border: 1px solid var(--rule); border-radius: 7px;
+      background-color: var(--soft);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='m2.5 4.5 3.5 3 3.5-3' fill='none' stroke='%23878681' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 9px center;
+      font: 600 11px/1.3 ui-sans-serif,system-ui,sans-serif; color: var(--ink);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+    }
+    .reading-page .reader-type-controls { display: flex; align-items: center; border: 1px solid var(--rule); border-radius: 7px; height: 35px; overflow: hidden; flex: none; }
+    .reading-page .reader-type-controls button { background: transparent; color: var(--ink); border: 0; height: 100%; min-width: 30px; padding: 0 7px; font: 700 12px ui-sans-serif,system-ui,sans-serif; }
+    .reading-page .reader-type-controls button:hover, .reading-page .reader-color-button:hover { background: var(--soft); }
+    .reading-page .reader-type-controls button:disabled { opacity: .35; cursor: not-allowed; }
+    .reading-page .reader-type-controls .reader-zoom-reset { min-width: 44px; padding: 0 5px; font-size: 10px; color: var(--muted); border-left: 1px solid var(--rule); border-right: 1px solid var(--rule); font-variant-numeric: tabular-nums; }
+    .reading-page .reader-color-button { display: grid; place-items: center; flex: none; height: 35px; width: 35px; background: transparent; border: 1px solid var(--rule); border-radius: 7px; color: var(--ink); font-size: 20px; line-height: 1; }
+    .reading-page .reader-body { width: 100%; min-height: 280px; }
+    .reading-page .reader-outline { display: none; }
     .reading-page .article-content {
-      width: min(100%, 760px);
-      margin: 0 auto;
-      padding: clamp(38px, 7vw, 92px) clamp(24px, 6vw, 70px) 110px;
+      width: min(100%, 790px); margin: 0 auto;
+      padding: clamp(44px, 7vw, 100px) clamp(27px, 6vw, 74px) 85px;
       font-family: var(--prose-font);
-      font-size: 18px;
+      font-size: calc(var(--reader-base-size) * var(--reader-scale));
       line-height: 1.84;
       overflow-wrap: anywhere;
     }
@@ -51,76 +124,106 @@
     .reading-page .article-content h4,
     .reading-page .article-content h5,
     .reading-page .article-content h6 {
-      color: var(--ink);
-      font-family: var(--heading-font);
-      line-height: 1.22;
-      font-weight: 700;
-      letter-spacing: -.035em;
-      scroll-margin-top: 24px;
+      color: var(--ink); font-family: var(--heading-font); line-height: 1.2; font-weight: 700;
+      letter-spacing: -.035em; scroll-margin-top: 128px;
     }
-    .reading-page .article-content h1 { font-size: clamp(2.6rem, 5vw, 4.1rem); margin: 0 0 .45em; letter-spacing: -.052em; }
-    .reading-page .article-content h2 { font-size: clamp(1.65rem, 3vw, 2.2rem); margin: 2.3em 0 .67em; }
-    .reading-page .article-content h3 { font-size: 1.35rem; margin: 1.8em 0 .55em; }
-    .reading-page .article-content h4 { font-size: 1.1rem; margin: 1.5em 0 .5em; }
+    .reading-page .article-content h1 { font-size: 2.85em; margin: 0 0 .45em; letter-spacing: -.05em; }
+    .reading-page .article-content h2 { font-size: 1.85em; margin: 2.3em 0 .68em; }
+    .reading-page .article-content h3 { font-size: 1.36em; margin: 1.8em 0 .58em; }
+    .reading-page .article-content h4 { font-size: 1.13em; margin: 1.55em 0 .5em; }
+    .reading-page .article-content h5, .reading-page .article-content h6 { font-size: 1em; margin: 1.4em 0 .5em; }
     .reading-page .article-content p { margin: 0 0 1.3em; }
-    .reading-page .article-content h1 + p { font-size: 1.13em; color: var(--muted); margin-bottom: 2.4em; }
+    .reading-page .article-content h1 + p { color: var(--muted); font-size: 1.13em; margin-bottom: 2.4em; }
     .reading-page .article-content strong { font-weight: 700; }
-    .reading-page .article-content a { color: var(--accent); text-underline-offset: .15em; }
+    .reading-page .article-content a { color: var(--accent); text-underline-offset: .16em; }
     .reading-page .article-content a:hover { text-decoration-thickness: 2px; }
-    .reading-page .article-content ul,
-    .reading-page .article-content ol { padding-left: 1.45em; margin: .4em 0 1.5em; }
+    .reading-page .article-content ul, .reading-page .article-content ol { padding-left: 1.45em; margin: .4em 0 1.5em; }
     .reading-page .article-content li { padding-left: .2em; margin: .42em 0; }
     .reading-page .article-content li::marker { color: var(--accent); }
     .reading-page .article-content li > p { margin: .3em 0; }
     .reading-page .article-content blockquote {
-      margin: 2.2em 0;
-      padding: .25em 0 .25em 1.35em;
-      border-left: 3px solid var(--accent);
-      color: var(--muted);
-      font-size: 1.17em;
-      font-style: italic;
-      line-height: 1.65;
+      margin: 2.2em 0; padding: .25em 0 .25em 1.3em; border-left: 3px solid var(--accent);
+      color: var(--muted); font-size: 1.16em; font-style: italic; line-height: 1.65;
     }
     .reading-page .article-content blockquote p:last-child { margin-bottom: 0; }
     .reading-page .article-content hr { border: 0; border-top: 1px solid var(--rule); margin: 3.6em auto; width: 38%; }
-    .reading-page .article-content code {
-      font: .84em/1.6 ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-      padding: .15em .32em;
-      background: var(--soft);
-      border-radius: 4px;
-    }
-    .reading-page .article-content pre {
-      overflow-x: auto;
-      background: var(--soft);
-      border: 1px solid var(--rule);
-      border-radius: 8px;
-      padding: 1.1em 1.2em;
-      margin: 1.6em 0;
-    }
+    .reading-page .article-content code { font: .84em/1.6 ui-monospace, "SFMono-Regular", Consolas, "Liberation Mono", monospace; padding: .15em .32em; background: var(--soft); border-radius: 4px; }
+    .reading-page .article-content pre { overflow-x: auto; background: var(--soft); border: 1px solid var(--rule); border-radius: 8px; padding: 1.1em 1.2em; margin: 1.6em 0; }
     .reading-page .article-content pre code { padding: 0; background: transparent; }
     .reading-page .article-content img { max-width: 100%; height: auto; border-radius: 6px; }
-    .reading-page .article-content table { display: block; width: 100%; overflow-x: auto; border-collapse: collapse; margin: 1.8em 0; font-size: .9em; }
-    .reading-page .article-content th,
-    .reading-page .article-content td { text-align: left; border-bottom: 1px solid var(--rule); padding: .7em .8em; }
+    .reading-page .article-content table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; margin: 1.8em 0; font-size: .9em; }
+    .reading-page .article-content th, .reading-page .article-content td { text-align: left; border-bottom: 1px solid var(--rule); padding: .7em .8em; }
     .reading-page .article-content th { color: var(--ink); background: var(--soft); }
     .reading-page .article-content input[type="checkbox"] { accent-color: var(--accent); }
-    .reading-page[data-theme="editorial"] .article-content { font-size: 16.5px; line-height: 1.83; }
-    .reading-page[data-theme="editorial"] .article-content h1 { font-weight: 800; letter-spacing: -.065em; }
+    .reading-page[data-theme="editorial"] .article-content { line-height: 1.82; }
+    .reading-page[data-theme="editorial"] .article-content h1 { font-weight: 800; letter-spacing: -.06em; }
     .reading-page[data-theme="editorial"] .article-content h2 { padding-top: .65em; border-top: 1px solid var(--rule); font-weight: 750; }
     .reading-page[data-theme="editorial"] .article-content h3 { font-weight: 750; }
     .reading-page[data-theme="editorial"] .article-content blockquote { font-size: 1.06em; font-style: normal; background: var(--soft); padding: 1em 1.3em; border-radius: 0 8px 8px 0; }
-    @media (max-width: 620px) {
-      .reading-page .article-content { padding: 35px 23px 70px; font-size: 17px; }
-      .reading-page[data-theme="editorial"] .article-content { font-size: 16px; }
+    .reading-page .reader-document-footer { text-align: center; margin: 0 auto; padding: 0 20px 70px; color: var(--muted); font: 12px/1.7 ui-sans-serif,system-ui,sans-serif; }
+    .reading-page .reader-end-symbol { display: block; font: italic 35px Georgia, serif; color: var(--accent); margin-bottom: 9px; }
+    .reading-page .reader-document-footer p { margin: 0 0 16px; }
+    .reading-page .reader-backtop { border: 1px solid var(--rule); color: var(--ink); border-radius: 30px; padding: 9px 15px; background: var(--soft); font: 600 11px ui-sans-serif,system-ui,sans-serif; }
+    .reading-page .reader-backtop:hover { border-color: var(--accent); }
+    @media (min-width: 1080px) {
+      .reading-page:not([data-mode="preview"]) .reader-body {
+        display: grid; grid-template-columns: minmax(180px, 235px) minmax(0, 790px);
+        align-items: start; justify-content: center; gap: clamp(20px, 4vw, 66px);
+        max-width: 1260px; margin: 0 auto; padding: 0 26px;
+      }
+      .reading-page:not([data-mode="preview"]) .reader-outline {
+        display: block; position: sticky; top: 112px; align-self: start;
+        max-height: calc(100vh - 142px); overflow-y: auto; padding: 63px 0 24px 8px;
+        scrollbar-width: thin;
+      }
+      .reading-page:not([data-mode="preview"]) .article-content { padding-left: 35px; padding-right: 55px; }
+      .reading-page .reader-outline-top { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding-bottom: 14px; border-bottom: 1px solid var(--rule); color: var(--muted); font: 800 9px/1.4 ui-sans-serif,system-ui,sans-serif; letter-spacing: .12em; }
+      .reading-page .reader-section-count { font-weight: 500; letter-spacing: 0; }
+      .reading-page .reader-toc { margin: 17px 0 24px; display: flex; flex-direction: column; gap: 3px; }
+      .reading-page .reader-toc-link { display: block; padding: 10px 12px; color: var(--muted); border-left: 2px solid transparent; text-decoration: none; border-radius: 0 4px 4px 0; font: 500 12px/1.45 ui-sans-serif,system-ui,sans-serif; overflow-wrap: anywhere; }
+      .reading-page .reader-toc-link:hover { background: var(--soft); color: var(--ink); }
+      .reading-page .reader-toc-link.is-current { border-left-color: var(--accent); color: var(--ink); background: var(--soft); font-weight: 750; }
+      .reading-page .reader-toc-level-3 { padding-left: 23px; font-size: 11px; }
+      .reading-page .reader-toc-level-4 { padding-left: 34px; font-size: 11px; }
+      .reading-page .reader-sidebar-footnote { margin: 25px 0 0; padding-top: 18px; border-top: 1px solid var(--rule); color: var(--muted); font: 11px/1.6 ui-sans-serif,system-ui,sans-serif; }
+    }
+    @media (max-width: 760px) {
+      .reading-page .reader-chrome-inner { flex-wrap: wrap; gap: 10px; padding: 10px 14px; }
+      .reading-page .reader-document-heading { flex: 1 0 100%; }
+      .reading-page .reader-document-name { max-width: calc(100vw - 115px); }
+      .reading-page .reader-actions { justify-content: space-between; width: 100%; }
+      .reading-page .reader-section-wrapper { flex: 1; }
+      .reading-page .reader-section-label { display: none; }
+      .reading-page .reader-section-select { flex: 1; width: 100%; }
+      .reading-page .article-content { padding: 40px 24px 64px; }
+    }
+    .reading-page[data-mode="preview"] .reader-chrome-inner { flex-wrap: wrap; gap: 9px; padding: 11px 13px; }
+    .reading-page[data-mode="preview"] .reader-document-heading { flex: 1 0 100%; }
+    .reading-page[data-mode="preview"] .reader-document-name { max-width: 330px; }
+    .reading-page[data-mode="preview"] .reader-actions { width: 100%; justify-content: space-between; }
+    .reading-page[data-mode="preview"] .reader-section-wrapper { flex: 1; }
+    .reading-page[data-mode="preview"] .reader-section-label { display: none; }
+    .reading-page[data-mode="preview"] .reader-section-select { width: 100%; }
+    .reading-page[data-mode="preview"] .article-content { padding: 44px clamp(24px, 5vw, 54px) 70px; }
+    @media (max-width: 480px) {
+      .reading-page .reader-type-controls button { min-width: 28px; padding: 0 5px; }
+      .reading-page .reader-type-controls .reader-zoom-reset { min-width: 39px; }
+      .reading-page .reader-actions { gap: 7px; }
+      .reading-page .article-content h1 { font-size: 2.4em; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .reading-page .reader-progress-fill, .reading-page { transition: none; }
     }
     @media print {
-      .reading-page { background: white; }
-      .reading-page .article-content { width: 100%; padding: 0; }
-      .reading-page .article-content h1,
-      .reading-page .article-content h2,
-      .reading-page .article-content h3 { break-after: avoid; }
-      .reading-page .article-content blockquote,
-      .reading-page .article-content pre { break-inside: avoid; }
+      .reading-page, .reading-page[data-appearance="dark"], .reading-page[data-appearance="dark"][data-theme="editorial"] {
+        --paper: white; --ink: black; --muted: #555; --rule: #bbb; --soft: white;
+        background: white !important; color: black !important;
+      }
+      .reading-page .reader-chrome, .reading-page .reader-outline, .reading-page .reader-document-footer { display: none !important; }
+      .reading-page .reader-body { display: block !important; max-width: none !important; padding: 0 !important; }
+      .reading-page .article-content { width: 100% !important; padding: 0 !important; }
+      .reading-page .article-content h1, .reading-page .article-content h2, .reading-page .article-content h3 { break-after: avoid; }
+      .reading-page .article-content blockquote, .reading-page .article-content pre { break-inside: avoid; }
     }
   </style>
 </head>
@@ -154,6 +257,7 @@
               <button type="button" class="theme-choice is-active" data-theme="literary" aria-pressed="true">Literary</button>
               <button type="button" class="theme-choice" data-theme="editorial" aria-pressed="false">Editorial</button>
             </fieldset>
+            <button type="button" id="focus-button" class="subtle-button focus-button" aria-pressed="false">◫ Reading mode</button>
             <button type="button" id="download-button" class="dark-button"><span aria-hidden="true">↓</span> Download HTML</button>
           </div>
         </div>
@@ -175,8 +279,46 @@
               <span class="preview-live"><span class="small-dot"></span> LIVE</span>
             </div>
             <div class="preview-scroll">
-              <div class="reading-page" id="reading-page" data-theme="literary">
-                <article id="rendered-article" class="article-content" aria-label="Rendered Markdown document"></article>
+              <div class="reading-page" id="reading-page" data-mode="preview" data-theme="literary" data-appearance="light" data-zoom="100">
+                <header class="reader-chrome" aria-label="Reading controls">
+                  <div class="reader-progress-track" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="reader-progress-fill"></span></div>
+                  <div class="reader-chrome-inner">
+                    <div class="reader-document-heading">
+                      <span class="reader-symbol" aria-hidden="true">f</span>
+                      <div class="reader-document-info">
+                        <span class="reader-document-name">Untitled document</span>
+                        <span class="reader-reading-time">1 min read</span>
+                      </div>
+                    </div>
+                    <div class="reader-actions">
+                      <div class="reader-section-wrapper">
+                        <label class="reader-section-label" for="reader-section-select">YOU ARE HERE</label>
+                        <select class="reader-section-select" id="reader-section-select" aria-label="Current section; choose another section to jump to"><option>No sections yet</option></select>
+                      </div>
+                      <div class="reader-type-controls" role="group" aria-label="Text size controls">
+                        <button type="button" data-reader-zoom="out" aria-label="Decrease text size" title="Smaller text">A−</button>
+                        <button type="button" class="reader-zoom-reset" aria-label="Reset text size to 100%" title="Reset text size">100%</button>
+                        <button type="button" data-reader-zoom="in" aria-label="Increase text size" title="Larger text">A+</button>
+                      </div>
+                      <button type="button" class="reader-color-button" aria-label="Switch to dark mode" aria-pressed="false" title="Dark mode">☾</button>
+                    </div>
+                  </div>
+                </header>
+                <div class="reader-body">
+                  <aside class="reader-outline" aria-label="On this page">
+                    <div class="reader-outline-top"><span>CONTENTS</span><span class="reader-section-count">0 SECTIONS</span></div>
+                    <nav class="reader-toc" aria-label="Document sections"></nav>
+                    <p class="reader-sidebar-footnote">Select a heading to jump directly to that part of the document.</p>
+                  </aside>
+                  <div class="reader-document">
+                    <article id="rendered-article" class="article-content" aria-label="Rendered Markdown document"></article>
+                    <footer class="reader-document-footer">
+                      <span class="reader-end-symbol" aria-hidden="true">✳</span>
+                      <p>You've reached the end.</p>
+                      <button class="reader-backtop" type="button">↑ &nbsp; Back to the beginning</button>
+                    </footer>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="panel-footer" id="status-message" role="status" aria-live="polite">Ready to write.</div>
@@ -186,6 +328,228 @@
       <footer class="app-footer"><span>Built for stories, reports, and everything in between.</span><span>Files you upload stay in this browser unless you publish them to your repository.</span></footer>
     </main>
   </div>
+
+  <!-- This reading runtime is included verbatim in standalone HTML exports. -->
+  <script id="reader-runtime">
+  (() => {
+    "use strict";
+
+    const ZOOM_MIN = 80;
+    const ZOOM_MAX = 160;
+    const ZOOM_STEP = 10;
+    const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function getPreference(key) {
+      try { return window.localStorage.getItem(key); } catch (_) { return null; }
+    }
+    function savePreference(key, value) {
+      try { window.localStorage.setItem(key, value); } catch (_) { /* file:// may restrict storage */ }
+    }
+    function clamp(value, min, max) { return Math.min(max, Math.max(min, value)); }
+    function hashSectionId() {
+      try { return decodeURIComponent(window.location.hash.slice(1)); }
+      catch (_) { return window.location.hash.slice(1); }
+    }
+
+    function mount(root) {
+      if (root.folioReader) return root.folioReader;
+      const article = root.querySelector(".article-content");
+      const chrome = root.querySelector(".reader-chrome");
+      const picker = root.querySelector(".reader-section-select");
+      const contents = root.querySelector(".reader-toc");
+      const progressTrack = root.querySelector(".reader-progress-track");
+      const progressBar = root.querySelector(".reader-progress-fill");
+      const title = root.querySelector(".reader-document-name");
+      const readingTime = root.querySelector(".reader-reading-time");
+      const sectionCount = root.querySelector(".reader-section-count");
+      const zoomLabel = root.querySelector(".reader-zoom-reset");
+      const zoomOut = root.querySelector('[data-reader-zoom="out"]');
+      const zoomIn = root.querySelector('[data-reader-zoom="in"]');
+      const colorButton = root.querySelector(".reader-color-button");
+      const backTop = root.querySelector(".reader-backtop");
+      const scrollHost = root.closest(".preview-scroll") || window;
+      const isPreview = root.dataset.mode === "preview";
+      let headings = [];
+      let tocLinks = new Map();
+      let activeId = "";
+      let scheduled = false;
+      let zoom = 100;
+
+      function setZoom(nextValue, persist = true) {
+        zoom = clamp(Math.round(Number(nextValue) / ZOOM_STEP) * ZOOM_STEP || 100, ZOOM_MIN, ZOOM_MAX);
+        root.style.setProperty("--reader-scale", String(zoom / 100));
+        root.dataset.zoom = String(zoom);
+        zoomLabel.textContent = zoom + "%";
+        zoomLabel.title = "Reset text size to 100%";
+        zoomOut.disabled = zoom <= ZOOM_MIN;
+        zoomIn.disabled = zoom >= ZOOM_MAX;
+        if (persist) savePreference("folio.reader.zoom", String(zoom));
+        scheduleUpdate();
+      }
+
+      function setAppearance(value, persist = true) {
+        const dark = value === "dark";
+        root.dataset.appearance = dark ? "dark" : "light";
+        colorButton.textContent = dark ? "☀" : "☾";
+        colorButton.setAttribute("aria-pressed", String(dark));
+        colorButton.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
+        colorButton.title = dark ? "Light mode" : "Dark mode";
+        if (persist) savePreference("folio.reader.appearance", root.dataset.appearance);
+      }
+
+      function markActive(id) {
+        if (!id || id === activeId) return;
+        activeId = id;
+        picker.value = id;
+        for (const [headingId, link] of tocLinks) {
+          const current = headingId === id;
+          link.classList.toggle("is-current", current);
+          if (current) link.setAttribute("aria-current", "location");
+          else link.removeAttribute("aria-current");
+        }
+      }
+
+      function updatePosition() {
+        if (!headings.length) {
+          progressBar.style.width = "0%";
+          progressTrack.setAttribute("aria-valuenow", "0");
+          return;
+        }
+        const chromeBottom = chrome.getBoundingClientRect().bottom;
+        const upperGuide = chromeBottom + 28;
+        let current = headings[0];
+        for (const heading of headings) {
+          if (heading.getBoundingClientRect().top <= upperGuide) current = heading;
+          else break;
+        }
+        markActive(current.id);
+
+        const viewportBottom = scrollHost === window ? window.innerHeight : scrollHost.getBoundingClientRect().bottom;
+        const availableHeight = Math.max(100, viewportBottom - upperGuide);
+        const articleRect = article.getBoundingClientRect();
+        const travel = upperGuide - articleRect.top;
+        const totalTravel = articleRect.height - availableHeight;
+        const progress = totalTravel <= 0 ? 100 : Math.round(clamp(travel / totalTravel, 0, 1) * 100);
+        progressBar.style.width = progress + "%";
+        progressTrack.setAttribute("aria-valuenow", String(progress));
+      }
+
+      function scheduleUpdate() {
+        if (scheduled) return;
+        scheduled = true;
+        window.requestAnimationFrame(() => {
+          scheduled = false;
+          updatePosition();
+        });
+      }
+
+      function goToSection(id, writeHash = true, smooth = true) {
+        const target = headings.find((heading) => heading.id === id);
+        if (!target) return;
+        const behavior = smooth && !prefersReducedMotion ? "smooth" : "auto";
+        if (scrollHost === window) {
+          const y = target.getBoundingClientRect().top + window.scrollY - chrome.offsetHeight - 24;
+          window.scrollTo({ top: Math.max(0, y), behavior });
+        } else {
+          const y = target.getBoundingClientRect().top - scrollHost.getBoundingClientRect().top + scrollHost.scrollTop - chrome.offsetHeight - 24;
+          scrollHost.scrollTo({ top: Math.max(0, y), behavior });
+        }
+        markActive(id);
+        if (writeHash && (!isPreview || new URLSearchParams(window.location.search).has("doc"))) {
+          const url = new URL(window.location.href);
+          url.hash = id;
+          try { window.history.replaceState(null, "", url.href); }
+          catch (_) { /* Some file:// readers restrict history changes. */ }
+        }
+        scheduleUpdate();
+      }
+
+      function refresh(options = {}) {
+        headings = Array.from(article.querySelectorAll("h1, h2, h3, h4, h5, h6"))
+          .filter((heading) => heading.id && !heading.closest("blockquote"));
+        const sections = headings;
+        tocLinks = new Map();
+        contents.replaceChildren();
+        picker.replaceChildren();
+
+        if (!sections.length) {
+          picker.add(new Option("No sections yet", ""));
+          picker.disabled = true;
+          const message = document.createElement("p");
+          message.className = "reader-outline-empty";
+          message.textContent = "Add Markdown headings to navigate this document.";
+          contents.append(message);
+        } else {
+          picker.disabled = false;
+          for (const heading of sections) {
+            const label = heading.textContent.trim() || "Untitled section";
+            const level = Math.min(4, Number(heading.tagName.slice(1)));
+            picker.add(new Option((level >= 3 ? "   ".repeat(level - 2) + "↳ " : "") + label, heading.id));
+            const link = document.createElement("a");
+            link.href = "#" + encodeURIComponent(heading.id);
+            link.className = "reader-toc-link reader-toc-level-" + level;
+            link.textContent = label;
+            link.addEventListener("click", (event) => {
+              event.preventDefault();
+              goToSection(heading.id);
+            });
+            contents.append(link);
+            tocLinks.set(heading.id, link);
+          }
+        }
+
+        const mainTitle = article.querySelector("h1");
+        title.textContent = mainTitle ? mainTitle.textContent.trim() : "Untitled document";
+        const words = (article.textContent.trim().match(/\S+/g) || []).length;
+        const minutes = Math.max(1, Math.ceil(words / 220));
+        readingTime.textContent = minutes + " min read · " + words.toLocaleString() + " words";
+        sectionCount.textContent = sections.length + (sections.length === 1 ? " SECTION" : " SECTIONS");
+        activeId = "";
+        scheduleUpdate();
+
+        if (options.jumpToHash && hashSectionId()) {
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => goToSection(hashSectionId(), false, false));
+          });
+        }
+      }
+
+      picker.addEventListener("change", () => goToSection(picker.value));
+      zoomOut.addEventListener("click", () => setZoom(zoom - ZOOM_STEP));
+      zoomIn.addEventListener("click", () => setZoom(zoom + ZOOM_STEP));
+      zoomLabel.addEventListener("click", () => setZoom(100));
+      colorButton.addEventListener("click", () => setAppearance(root.dataset.appearance === "dark" ? "light" : "dark"));
+      backTop.addEventListener("click", () => {
+        const behavior = prefersReducedMotion ? "auto" : "smooth";
+        if (scrollHost === window) window.scrollTo({ top: 0, behavior });
+        else scrollHost.scrollTo({ top: 0, behavior });
+        if (!isPreview || new URLSearchParams(window.location.search).has("doc")) {
+          const url = new URL(window.location.href);
+          url.hash = "";
+          try { window.history.replaceState(null, "", url.href); }
+          catch (_) { /* Some file:// readers restrict history changes. */ }
+        }
+      });
+      scrollHost.addEventListener("scroll", scheduleUpdate, { passive: true });
+      window.addEventListener("resize", scheduleUpdate, { passive: true });
+      if (typeof ResizeObserver !== "undefined") new ResizeObserver(scheduleUpdate).observe(article);
+      window.addEventListener("hashchange", () => {
+        const id = hashSectionId();
+        if (id && headings.some((heading) => heading.id === id)) goToSection(id, false, false);
+      });
+
+      setZoom(getPreference("folio.reader.zoom") || root.dataset.zoom || "100", false);
+      setAppearance(getPreference("folio.reader.appearance") || root.dataset.appearance || "light", false);
+      const controller = { refresh, setZoom, setAppearance, goToSection };
+      root.folioReader = controller;
+      refresh({ jumpToHash: !isPreview });
+      return controller;
+    }
+
+    window.FolioReader = { mount };
+    document.querySelectorAll(".reading-page").forEach(mount);
+  })();
+  </script>
 
   <!-- Pinned dependencies. Both run entirely in the browser. -->
   <script defer src="https://cdn.jsdelivr.net/npm/marked@18.0.14/lib/marked.umd.js"></script>
