@@ -54,6 +54,10 @@ The editor uses [Marked](https://marked.js.org/) and [DOMPurify](https://github.
 - Reading preferences use browser storage where available; some file viewers restrict storage, but controls still work for that session.
 - The parser supports standard Markdown well; complex custom extensions (such as academic footnotes) may require plugins.
 
+## Support
+
+If Folio is useful to you, you can [buy me a coffee ☕](https://buymeacoffee.com/ashwin2rai).
+
 ## License
 
 This starter code is yours to customize and use. Marked and DOMPurify keep their own licenses.
